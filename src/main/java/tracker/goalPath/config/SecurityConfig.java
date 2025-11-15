@@ -23,32 +23,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // ❌ CSRF отключаем (так как REST API и JWT)
                 .csrf(csrf -> csrf.disable())
-
-                // ✅ Разрешаем некоторые эндпоинты без авторизации
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",             // регистрация, логин
-                                "/v3/api-docs/**",      // OpenAPI
+                                "/auth/**",
+                                "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .anyRequest().authenticated() // остальные требуют токен
+                        .anyRequest().authenticated()
                 )
 
-                // ✅ Без сохранения сессий (JWT Stateless)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // ✅ Подключаем наш JWT фильтр перед UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ Шифрование паролей
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
