@@ -59,7 +59,6 @@ public class TaskController {
 
     @PutMapping("/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(
-            @PathVariable Long goalId,
             @PathVariable Long taskId,
             @Valid @RequestBody TaskDTO taskDto,
             Authentication authentication
@@ -71,7 +70,6 @@ public class TaskController {
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable Long goalId,
             @PathVariable Long taskId,
             Authentication authentication
     ) {

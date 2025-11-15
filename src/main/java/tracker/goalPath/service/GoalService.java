@@ -7,10 +7,8 @@ import tracker.goalPath.model.Goal;
 import tracker.goalPath.mapper.GoalMapper;
 import tracker.goalPath.repository.GoalRepository;
 import tracker.goalPath.model.User;
-import tracker.goalPath.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,23 +16,21 @@ import java.util.stream.Collectors;
 public class GoalService {
 
     private final GoalRepository goalRepository;
-    private final UserRepository userRepository;
     private final GoalMapper goalMapper;
+    private final DataAuthorizationService dataAuthService;
 
-    public GoalService(GoalRepository goalRepository, UserRepository userRepository, GoalMapper goalMapper) {
+    public GoalService(GoalRepository goalRepository, GoalMapper goalMapper, DataAuthorizationService dataAuthService) {
         this.goalRepository = goalRepository;
-        this.userRepository = userRepository;
         this.goalMapper = goalMapper;
+        this.dataAuthService = dataAuthService;
     }
 
     public GoalDTO createGoal(Long userId, GoalDTO goalDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        User user = dataAuthService.checkUserData(userId);
 
         Goal goal = goalMapper.toEntity(goalDto);
         goal.setUser(user);
-
-        System.out.println("Creating goal for user: " + userId);
 
         Goal saved = goalRepository.save(goal);
         return goalMapper.toDTO(saved);
@@ -47,14 +43,13 @@ public class GoalService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<GoalDTO> getGoalById(Long goalId) {
-        return goalRepository.findById(goalId)
-                .map(goalMapper::toDTO);
+    public GoalDTO getGoalById(Long goalId, Long userId) {
+        Goal goal = dataAuthService.checkGoalOwnership(goalId, userId);
+        return goalMapper.toDTO(goal);
     }
 
-    public GoalDTO updateGoal(Long goalId, GoalDTO goalDto) {
-        Goal goal = goalRepository.findById(goalId)
-                .orElseThrow(() -> new IllegalArgumentException("Goal not found"));
+    public GoalDTO updateGoal(Long goalId, Long userId, GoalDTO goalDto) {
+        Goal goal = dataAuthService.checkGoalOwnership(goalId, userId);
 
         goal.setTitle(goalDto.getTitle());
         goal.setDescription(goalDto.getDescription());
@@ -65,7 +60,8 @@ public class GoalService {
         return goalMapper.toDTO(updated);
     }
 
-    public void deleteGoal(Long goalId) {
+    public void deleteGoal(Long goalId, Long userId) {
+        dataAuthService.checkGoalOwnership(goalId, userId);
         goalRepository.deleteById(goalId);
     }
 }

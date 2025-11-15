@@ -39,10 +39,7 @@ public class GoalController {
     @GetMapping("/{goalId}")
     public ResponseEntity<GoalDTO> getGoalById(@PathVariable Long goalId, Authentication authentication) {
         User user = getCurrentUser(authentication);
-        return goalService.getGoalById(goalId)
-                .filter(goal -> goal.getUserId().equals(user.getId()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(goalService.getGoalById(goalId, user.getId()));
     }
 
     @PostMapping
@@ -63,11 +60,7 @@ public class GoalController {
     ) {
         User user = getCurrentUser(authentication);
 
-        GoalDTO existingGoal = goalService.getGoalById(goalId)
-                .filter(goal -> goal.getUserId().equals(user.getId()))
-                .orElseThrow(() -> new RuntimeException("Goal not found or access denied"));
-
-        GoalDTO updatedGoal = goalService.updateGoal(goalId, goalDto);
+        GoalDTO updatedGoal = goalService.updateGoal(goalId, user.getId(), goalDto);
         return ResponseEntity.ok(updatedGoal);
     }
 
@@ -78,11 +71,7 @@ public class GoalController {
     ) {
         User user = getCurrentUser(authentication);
 
-        GoalDTO goal = goalService.getGoalById(goalId)
-                .filter(g -> g.getUserId().equals(user.getId()))
-                .orElseThrow(() -> new RuntimeException("Goal not found or access denied"));
-
-        goalService.deleteGoal(goalId);
+        goalService.deleteGoal(goalId, user.getId());
         return ResponseEntity.noContent().build();
     }
 }
