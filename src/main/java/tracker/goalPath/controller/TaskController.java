@@ -49,6 +49,14 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("{taskId}")
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long taskId, Authentication authentication) {
+        User user = getCurrentUser(authentication);
+
+        TaskDTO task = taskService.getTaskById(user.getId(), taskId);
+        return ResponseEntity.ok(task);
+    }
+
     @PutMapping("/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(
             @PathVariable Long goalId,

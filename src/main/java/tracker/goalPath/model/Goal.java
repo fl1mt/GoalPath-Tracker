@@ -28,7 +28,7 @@ public class Goal {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String status = "NEW"; // NEW / IN_PROGRESS / DONE / CANCELLED
+    private String status = "NEW"; // NEW / IN_PROGRESS / DONE / CANCELLED // interface
 
     @Column(length = 100)
     private String category;

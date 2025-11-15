@@ -1,15 +1,23 @@
 package tracker.goalPath.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class SubtaskDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     private String title;
     private String description;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean completed;
+    @JsonIgnore
     private LocalDateTime createdAt;
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long taskId;
 
     public Long getId() {
