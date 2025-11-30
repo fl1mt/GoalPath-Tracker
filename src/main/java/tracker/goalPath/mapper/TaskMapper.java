@@ -20,6 +20,8 @@ public interface TaskMapper {
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
         task.setDeadline(dto.getDeadline());
+        task.setStatus(dto.getStatus());
+        task.setPriority(dto.getPriority());
 
         if (dto.getGoalId() != null) {
             Goal goal = new Goal();

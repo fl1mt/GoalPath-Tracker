@@ -3,18 +3,17 @@ package tracker.goalPath.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import tracker.goalPath.dto.GoalDTO;
 import tracker.goalPath.dto.TaskDTO;
-import tracker.goalPath.model.Task;
 import tracker.goalPath.service.TaskService;
 import tracker.goalPath.repository.UserRepository;
 import tracker.goalPath.model.User;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/goals/{goalId}/tasks")
+@RequestMapping("api/goals/{goalId}/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -33,7 +32,7 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(
-            @PathVariable Long goalId,
+            @PathVariable UUID goalId,
             @Valid @RequestBody TaskDTO taskDto,
             Authentication authentication
     ) {
@@ -43,38 +42,9 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getTasksByGoal(@PathVariable Long goalId, Authentication authentication) {
+    public ResponseEntity<List<TaskDTO>> getTasksByGoal(@PathVariable UUID goalId, Authentication authentication) {
         User user = getCurrentUser(authentication);
         List<TaskDTO> tasks = taskService.getTasksByGoal(user.getId(), goalId);
         return ResponseEntity.ok(tasks);
-    }
-
-    @GetMapping("{taskId}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long taskId, Authentication authentication) {
-        User user = getCurrentUser(authentication);
-
-        TaskDTO task = taskService.getTaskById(user.getId(), taskId);
-        return ResponseEntity.ok(task);
-    }
-
-    @PutMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> updateTask(
-            @PathVariable Long taskId,
-            @Valid @RequestBody TaskDTO taskDto,
-            Authentication authentication
-    ) {
-        User user = getCurrentUser(authentication);
-        TaskDTO updatedTask = taskService.updateTask(user.getId(), taskId, taskDto);
-        return ResponseEntity.ok(updatedTask);
-    }
-
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(
-            @PathVariable Long taskId,
-            Authentication authentication
-    ) {
-        User user = getCurrentUser(authentication);
-        taskService.deleteTask(user.getId(), taskId);
-        return ResponseEntity.noContent().build();
     }
 }

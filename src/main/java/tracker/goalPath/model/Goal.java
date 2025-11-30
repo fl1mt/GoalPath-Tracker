@@ -5,8 +5,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -14,8 +16,8 @@ import java.util.List;
 public class Goal {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -28,12 +30,12 @@ public class Goal {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String status = "NEW"; // NEW / IN_PROGRESS / DONE / CANCELLED // interface
+    private String status = "PROGRESS"; // IN_PROGRESS / FINISH / CANCELED // interface
 
     @Column(length = 100)
     private String category;
 
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     //@Column(nullable = false)
     //private Double progress = 0.0; // later
@@ -52,11 +54,11 @@ public class Goal {
     @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -100,11 +102,11 @@ public class Goal {
         this.category = category;
     }
 
-    public LocalDateTime getDeadline() {
+    public LocalDate getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 

@@ -11,6 +11,8 @@ import tracker.goalPath.repository.SubtaskRepository;
 import tracker.goalPath.repository.TaskRepository;
 import tracker.goalPath.repository.UserRepository;
 
+import java.util.UUID;
+
 @Service
 public class DataAuthorizationService {
 
@@ -26,17 +28,17 @@ public class DataAuthorizationService {
         this.userRepository = userRepository;
     }
 
-    public Goal checkGoalOwnership(Long goalId, Long userId) {
+    public Goal checkGoalOwnership(UUID goalId, Long userId) {
         return goalRepository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal not found or access denied"));
     }
 
-    public Task checkTaskOwnership(Long taskId, Long userId) {
+    public Task checkTaskOwnership(UUID taskId, Long userId) {
         return taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found or access denied"));
     }
 
-    public Subtask checkSubtaskOwnership(Long subtaskId, Long userId) {
+    public Subtask checkSubtaskOwnership(UUID subtaskId, Long userId) {
         return subtaskRepository.findByIdAndUserId(subtaskId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subtask not found or access denied"));
     }

@@ -7,10 +7,11 @@ import tracker.goalPath.model.Subtask;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface SubtaskRepository extends JpaRepository<Subtask, Long> {
-    List<Subtask> findByTaskId(Long taskId);
+public interface SubtaskRepository extends JpaRepository<Subtask, UUID> {
+    List<Subtask> findByTaskId(UUID taskId);
 
     @Query("SELECT s FROM Subtask s WHERE s.id = :subtaskId AND s.task.goal.user.id = :userId")
-    Optional<Subtask> findByIdAndUserId(@Param("subtaskId") Long subtaskId, @Param("userId") Long userId);
-}
+    Optional<Subtask> findByIdAndUserId(@Param("subtaskId") UUID subtaskId, @Param("userId") Long userId);
+} 

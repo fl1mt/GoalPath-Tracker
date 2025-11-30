@@ -8,10 +8,10 @@ import tracker.goalPath.model.Task;
 import tracker.goalPath.repository.TaskRepository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -24,7 +24,8 @@ public class TaskService {
         this.authService = authService;
     }
 
-    public TaskDTO createTask(Long userId, Long goalId, TaskDTO taskDTO) {
+    @Transactional
+    public TaskDTO createTask(Long userId, UUID goalId, TaskDTO taskDTO) {
 
         Goal goal = authService.checkGoalOwnership(goalId, userId);
         Task task = taskMapper.toEntity(taskDTO);
@@ -35,7 +36,7 @@ public class TaskService {
         return taskMapper.toDTO(savedTask);
     }
 
-    public List<TaskDTO> getTasksByGoal(Long userId, Long goalId) {
+    public List<TaskDTO> getTasksByGoal(Long userId, UUID goalId) {
 
         authService.checkGoalOwnership(goalId, userId);
 
@@ -45,25 +46,34 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public TaskDTO getTaskById(Long userId, Long taskId) {
+    public TaskDTO getTaskById(Long userId, UUID taskId) {
 
         Task task = authService.checkTaskOwnership(taskId, userId);
-        return taskMapper.toDTO(task);
-    }
 
-    public TaskDTO updateTask(Long userId, Long taskId, TaskDTO taskDTO) {
+        TaskDTO dto = taskMapper.toDTO(task);
+
+        if (task.getGoal() != null) {
+            dto.setGoalTitle(task.getGoal().getTitle());
+        }
+
+        return dto;
+    }
+    @Transactional
+    public TaskDTO updateTask(Long userId, UUID taskId, TaskDTO taskDTO) {
 
         Task existingTask = authService.checkTaskOwnership(taskId, userId);
 
         existingTask.setTitle(taskDTO.getTitle());
         existingTask.setDescription(taskDTO.getDescription());
         existingTask.setDeadline(taskDTO.getDeadline());
+        existingTask.setPriority(taskDTO.getPriority());
+        existingTask.setStatus(taskDTO.getStatus());
 
         Task updatedTask = taskRepository.save(existingTask);
         return taskMapper.toDTO(updatedTask);
     }
-
-    public void deleteTask(Long userId, Long taskId) {
+    @Transactional
+    public void deleteTask(Long userId, UUID taskId) {
 
         Task task = authService.checkTaskOwnership(taskId, userId);
         taskRepository.delete(task);

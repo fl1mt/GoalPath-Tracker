@@ -5,8 +5,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -14,10 +16,10 @@ import java.util.List;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id", nullable = false)
     private Goal goal;
 
@@ -28,12 +30,12 @@ public class Task {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String status = "NEW"; // NEW / IN_PROGRESS / DONE
+    private String status = "PROGRESS"; // PROGRESS / FINISH / CANCELED
 
     @Column(nullable = false, length = 20)
     private String priority = "MEDIUM"; // LOW / MEDIUM / HIGH
 
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
@@ -46,11 +48,11 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subtask> subtasks;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -94,11 +96,11 @@ public class Task {
         this.priority = priority;
     }
 
-    public LocalDateTime getDeadline() {
+    public LocalDate getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 

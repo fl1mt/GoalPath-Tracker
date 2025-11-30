@@ -2,20 +2,27 @@ package tracker.goalPath.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class TaskDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
-    private LocalDateTime deadline;
+    private LocalDate deadline;
+    private String status = "PROGRESS";
+    private String priority = "MEDIUM";
     @JsonIgnore
     private LocalDateTime createdAt;
     @JsonIgnore
     private LocalDateTime updatedAt;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String goalTitle;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long goalId;
+    private UUID goalId;
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
@@ -25,11 +32,11 @@ public class TaskDTO {
         this.updatedAt = updatedAt;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -49,11 +56,11 @@ public class TaskDTO {
         this.description = description;
     }
 
-    public LocalDateTime getDeadline() {
+    public LocalDate getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 
@@ -65,12 +72,35 @@ public class TaskDTO {
         this.createdAt = createdAt;
     }
 
-    public Long getGoalId() {
+    public UUID getGoalId() {
         return goalId;
     }
 
-    public void setGoalId(Long goalId) {
+    public void setGoalId(UUID goalId) {
         this.goalId = goalId;
     }
 
+    public void setGoalTitle(String goalTitle) {
+        this.goalTitle = goalTitle;
+    }
+
+    public String getGoalTitle() {
+        return goalTitle;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
 }

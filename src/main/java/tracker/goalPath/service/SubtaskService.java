@@ -9,10 +9,10 @@ import tracker.goalPath.model.Task;
 import tracker.goalPath.repository.SubtaskRepository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class SubtaskService {
     private final SubtaskRepository subtaskRepository;
     private final SubtaskMapper subtaskMapper;
@@ -26,22 +26,22 @@ public class SubtaskService {
         this.authService = authService;
     }
 
-    public SubtaskDTO createSubtask(Long userId, Long goalId, Long taskId, SubtaskDTO subtaskDTO){
+    @Transactional
+    public SubtaskDTO createSubtask(Long userId, UUID taskId, SubtaskDTO subtaskDTO){
 
-        authService.checkGoalOwnership(goalId, userId);
         Task task = authService.checkTaskOwnership(taskId, userId);
 
         Subtask subtask = subtaskMapper.toEntity(subtaskDTO);
+        subtask.setCompleted(false);
         subtask.setTask(task);
 
         Subtask savedSubtask = subtaskRepository.save(subtask);
         return subtaskMapper.toDTO(savedSubtask);
     }
 
-    public List<SubtaskDTO> getSubtasksByTask(Long userId, Long goalId, Long taskId) {
+    public List<SubtaskDTO> getSubtasksByTask(Long userId, UUID taskId) {
 
-        authService.checkGoalOwnership(goalId, userId);
-        Task task = authService.checkTaskOwnership(taskId, userId);
+        authService.checkTaskOwnership(taskId, userId);
 
         List<Subtask> subtasks = subtaskRepository.findByTaskId(taskId);
 
@@ -50,30 +50,28 @@ public class SubtaskService {
                 .collect(Collectors.toList());
     }
 
-    public SubtaskDTO getSubtaskById(Long userId, Long subtaskId) {
+    public SubtaskDTO getSubtaskById(Long userId, UUID subtaskId) {
 
         Subtask subtask = authService.checkSubtaskOwnership(subtaskId, userId);
         return subtaskMapper.toDTO(subtask);
     }
+    @Transactional
+    public SubtaskDTO updateSubtask(Long userId, UUID subtaskId, UUID taskId, SubtaskDTO subtaskDTO) {
 
-    public SubtaskDTO updateSubtask(Long userId, Long subtaskId, Long taskId, Long goalId, SubtaskDTO subtaskDTO) {
-
-        authService.checkGoalOwnership(goalId, userId);
-        Task task = authService.checkTaskOwnership(taskId, userId);
+        authService.checkTaskOwnership(taskId, userId);
         Subtask existingSubtask = authService.checkSubtaskOwnership(subtaskId, userId);
 
         existingSubtask.setTitle(subtaskDTO.getTitle());
         existingSubtask.setDescription(subtaskDTO.getDescription());
-        existingSubtask.setCompleted(subtaskDTO.getCompleted()); // bug
+        existingSubtask.setCompleted(subtaskDTO.getCompleted());
 
         Subtask updatedTask = subtaskRepository.save(existingSubtask);
         return subtaskMapper.toDTO(updatedTask);
     }
+    @Transactional
+    public void deleteSubtask(Long userId, UUID taskId, UUID subtaskId) {
 
-    public void deleteSubtask(Long userId, Long goalId, Long taskId, Long subtaskId) {
-
-        authService.checkGoalOwnership(goalId, userId);
-        Task task = authService.checkTaskOwnership(taskId, userId);
+        authService.checkTaskOwnership(taskId, userId);
 
         Subtask subtask = authService.checkSubtaskOwnership(subtaskId, userId);
 

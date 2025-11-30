@@ -5,15 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import tracker.goalPath.dto.SubtaskDTO;
-import tracker.goalPath.dto.TaskDTO;
 import tracker.goalPath.model.User;
 import tracker.goalPath.repository.UserRepository;
 import tracker.goalPath.service.SubtaskService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/goals/{goalId}/tasks/{taskId}/subtasks")
+@RequestMapping("api/tasks/{taskId}/subtasks")
 public class SubtaskController {
 
     private final SubtaskService subtaskService;
@@ -32,48 +32,45 @@ public class SubtaskController {
 
     @PostMapping
     public ResponseEntity<SubtaskDTO> createSubtask(
-            @PathVariable Long taskId, @PathVariable Long goalId,
+            @PathVariable UUID taskId,
             @Valid @RequestBody SubtaskDTO subtaskDTO,
             Authentication authentication
     ) {
 
         User user = getCurrentUser(authentication);
-        SubtaskDTO createdSubtask = subtaskService.createSubtask(user.getId(), goalId, taskId, subtaskDTO);
+        SubtaskDTO createdSubtask = subtaskService.createSubtask(user.getId(), taskId, subtaskDTO);
         return ResponseEntity.ok(createdSubtask);
     }
 
     @GetMapping
-    public ResponseEntity<List<SubtaskDTO>> getSubtasksByTask(@PathVariable Long goalId,
-                                                              @PathVariable Long taskId, Authentication authentication) {
+    public ResponseEntity<List<SubtaskDTO>> getSubtasksByTask(@PathVariable UUID taskId, Authentication authentication) {
         User user = getCurrentUser(authentication);
 
-        List<SubtaskDTO> subtasks = subtaskService.getSubtasksByTask(user.getId(), goalId, taskId);
+        List<SubtaskDTO> subtasks = subtaskService.getSubtasksByTask(user.getId(), taskId);
         return ResponseEntity.ok(subtasks);
     }
 
     @PutMapping("/{subtaskId}")
     public ResponseEntity<SubtaskDTO> updateTask(
-            @PathVariable Long goalId,
-            @PathVariable Long taskId,
-            @PathVariable Long subtaskId,
+            @PathVariable UUID taskId,
+            @PathVariable UUID subtaskId,
             @Valid @RequestBody SubtaskDTO subtaskDTO,
             Authentication authentication
     ) {
         User user = getCurrentUser(authentication);
 
-        SubtaskDTO updatedSubtask = subtaskService.updateSubtask(user.getId(), subtaskId, taskId, goalId, subtaskDTO);
+        SubtaskDTO updatedSubtask = subtaskService.updateSubtask(user.getId(), subtaskId, taskId, subtaskDTO);
         return ResponseEntity.ok(updatedSubtask);
     }
 
     @DeleteMapping("/{subtaskId}")
     public ResponseEntity<Void> deleteSubtask(
-            @PathVariable Long goalId,
-            @PathVariable Long taskId,
-            @PathVariable Long subtaskId,
+            @PathVariable UUID taskId,
+            @PathVariable UUID subtaskId,
             Authentication authentication
     ) {
         User user = getCurrentUser(authentication);
-        subtaskService.deleteSubtask(user.getId(), goalId, taskId, subtaskId);
+        subtaskService.deleteSubtask(user.getId(), taskId, subtaskId);
         return ResponseEntity.noContent().build();
     }
 }

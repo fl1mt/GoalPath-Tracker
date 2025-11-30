@@ -3,16 +3,21 @@ package tracker.goalPath.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class GoalDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
     private String category;
-    private LocalDateTime deadline;
+
+    private String status;
+
+    private LocalDate deadline;
     @JsonIgnore
     private LocalDateTime createdAt;
     @JsonIgnore
@@ -21,11 +26,18 @@ public class GoalDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long userId;
 
-    public Long getId(){
+    public UUID getId(){
         return id;
     }
+    public String getStatus() {
+        return status;
+    }
 
-    public void setId(Long id) {
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -54,11 +66,11 @@ public class GoalDTO {
         this.description = description;
     }
 
-    public LocalDateTime getDeadline() {
+    public LocalDate getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 

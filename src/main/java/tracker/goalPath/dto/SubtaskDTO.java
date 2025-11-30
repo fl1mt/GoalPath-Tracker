@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class SubtaskDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean completed;
     @JsonIgnore
     private LocalDateTime createdAt;
@@ -18,13 +18,13 @@ public class SubtaskDTO {
     private LocalDateTime updatedAt;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long taskId;
+    private UUID taskId;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -67,11 +67,11 @@ public class SubtaskDTO {
         this.updatedAt = updatedAt;
     }
 
-    public Long getTaskId() {
+    public UUID getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(Long taskId) {
+    public void setTaskId(UUID taskId) {
         this.taskId = taskId;
     }
 

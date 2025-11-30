@@ -10,9 +10,10 @@ import tracker.goalPath.model.User;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/goals")
+@RequestMapping("api/goals")
 public class GoalController {
 
     private final GoalService goalService;
@@ -37,7 +38,7 @@ public class GoalController {
     }
 
     @GetMapping("/{goalId}")
-    public ResponseEntity<GoalDTO> getGoalById(@PathVariable Long goalId, Authentication authentication) {
+    public ResponseEntity<GoalDTO> getGoalById(@PathVariable UUID goalId, Authentication authentication) {
         User user = getCurrentUser(authentication);
         return ResponseEntity.ok(goalService.getGoalById(goalId, user.getId()));
     }
@@ -54,7 +55,7 @@ public class GoalController {
 
     @PutMapping("/{goalId}")
     public ResponseEntity<GoalDTO> updateGoal(
-            @PathVariable Long goalId,
+            @PathVariable UUID goalId,
             @Valid @RequestBody GoalDTO goalDto,
             Authentication authentication
     ) {
@@ -66,7 +67,7 @@ public class GoalController {
 
     @DeleteMapping("/{goalId}")
     public ResponseEntity<Void> deleteGoal(
-            @PathVariable Long goalId,
+            @PathVariable UUID goalId,
             Authentication authentication
     ) {
         User user = getCurrentUser(authentication);
