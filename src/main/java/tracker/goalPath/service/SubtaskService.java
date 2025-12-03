@@ -36,14 +36,20 @@ public class SubtaskService {
         subtask.setTask(task);
 
         Subtask savedSubtask = subtaskRepository.save(subtask);
+
+
         return subtaskMapper.toDTO(savedSubtask);
     }
 
-    public List<SubtaskDTO> getSubtasksByTask(Long userId, UUID taskId) {
-
+    public List<SubtaskDTO> getSubtasksByTask(Boolean isCompleted, String query, Long userId, UUID taskId) {
         authService.checkTaskOwnership(taskId, userId);
+        List<Subtask> subtasks;
 
-        List<Subtask> subtasks = subtaskRepository.findByTaskId(taskId);
+        if(query != null && !query.trim().isEmpty()){
+            subtasks = subtaskRepository.searchSubtasksByQueryAndSort(taskId, query);
+        } else{
+            subtasks = subtaskRepository.findFilteredAndSortedSubtasks(taskId, isCompleted);
+        }
 
         return subtasks.stream()
                 .map(subtaskMapper::toDTO)

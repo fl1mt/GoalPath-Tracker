@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -20,35 +19,16 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = userMapper.toEntity(userDTO);
-        user.setId(null);
-        return userMapper.toDTO(userRepository.save(user));
-    }
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toDTO)
-                .toList();
+    public UserDTO getUserProfile(User user){
+        return userMapper.toDTO(user);
     }
 
-    public Optional<UserDTO> getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(userMapper::toDTO);
-    }
+    public UserDTO updateUserUsername(User userToUpdate, UserDTO userDTO) {
+        if (userDTO != null && userDTO.getUsername() != null && !userDTO.getUsername().trim().isEmpty()) {
+            userToUpdate.setUsername(userDTO.getUsername());
+            userRepository.save(userToUpdate);
+        }
 
-    public Optional<UserDTO> updateUser(Long id, UserDTO updatedUser) {
-        return userRepository.findById(id)
-                .map(existingUser -> {
-                    existingUser.setUsername(updatedUser.getUsername());
-                    existingUser.setEmail(updatedUser.getEmail());
-                    return userMapper.toDTO(userRepository.save(existingUser));
-                });
-    }
-
-    public boolean deleteUser(Long id) {
-        if (!userRepository.existsById(id)) return false;
-        userRepository.deleteById(id);
-        return true;
+        return userMapper.toDTO(userToUpdate);
     }
 }

@@ -1,5 +1,6 @@
 package tracker.goalPath.controller;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +43,10 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getTasksByGoal(@PathVariable UUID goalId, Authentication authentication) {
+    public ResponseEntity<List<TaskDTO>> getTasksByGoal(@PathVariable UUID goalId, Authentication authentication,
+    @RequestParam(required = false) String status, @RequestParam(required = false) String query) {
         User user = getCurrentUser(authentication);
-        List<TaskDTO> tasks = taskService.getTasksByGoal(user.getId(), goalId);
+        List<TaskDTO> tasks = taskService.getTasksByGoal(status, query, user.getId(), goalId);
         return ResponseEntity.ok(tasks);
     }
 }

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import tracker.goalPath.dto.SubtaskDTO;
+import tracker.goalPath.dto.TaskDTO;
+import tracker.goalPath.model.Subtask;
 import tracker.goalPath.model.User;
 import tracker.goalPath.repository.UserRepository;
 import tracker.goalPath.service.SubtaskService;
@@ -43,15 +45,25 @@ public class SubtaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SubtaskDTO>> getSubtasksByTask(@PathVariable UUID taskId, Authentication authentication) {
+    public ResponseEntity<List<SubtaskDTO>> getSubtasksByTask(@PathVariable UUID taskId, Authentication authentication,
+                                                              @RequestParam(required = false) Boolean isCompleted,
+                                                              @RequestParam(required = false) String query) {
         User user = getCurrentUser(authentication);
 
-        List<SubtaskDTO> subtasks = subtaskService.getSubtasksByTask(user.getId(), taskId);
+        List<SubtaskDTO> subtasks = subtaskService.getSubtasksByTask(isCompleted, query, user.getId(), taskId);
         return ResponseEntity.ok(subtasks);
     }
 
+    @GetMapping("/{subtaskId}")
+    public ResponseEntity<SubtaskDTO> getSubtaskById(@PathVariable UUID subtaskId, Authentication authentication) {
+        User user = getCurrentUser(authentication);
+
+        SubtaskDTO subtask = subtaskService.getSubtaskById(user.getId(), subtaskId);
+        return ResponseEntity.ok(subtask);
+    }
+
     @PutMapping("/{subtaskId}")
-    public ResponseEntity<SubtaskDTO> updateTask(
+    public ResponseEntity<SubtaskDTO> updateSubtask(
             @PathVariable UUID taskId,
             @PathVariable UUID subtaskId,
             @Valid @RequestBody SubtaskDTO subtaskDTO,

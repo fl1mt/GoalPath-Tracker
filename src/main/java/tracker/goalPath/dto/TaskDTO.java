@@ -14,6 +14,8 @@ public class TaskDTO {
     private LocalDate deadline;
     private String status = "PROGRESS";
     private String priority = "MEDIUM";
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private int subtaskCount;
     @JsonIgnore
     private LocalDateTime createdAt;
     @JsonIgnore
@@ -102,5 +104,13 @@ public class TaskDTO {
 
     public String getPriority() {
         return priority;
+    }
+
+    public void setSubtaskCount(int subtaskCount) {
+        this.subtaskCount = subtaskCount;
+    }
+
+    public int getSubtaskCount() {
+        return subtaskCount;
     }
 }

@@ -1,6 +1,7 @@
 package tracker.goalPath.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -47,6 +48,9 @@ public class Task {
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subtask> subtasks;
+
+    @Formula("(SELECT count(*) FROM subtasks s WHERE s.task_id = id)")
+    private int subtaskCount;
 
     public UUID getId() {
         return id;
@@ -128,4 +132,7 @@ public class Task {
         this.subtasks = subtasks;
     }
 
+    public int getSubtaskCount() {
+        return subtaskCount;
+    }
 }

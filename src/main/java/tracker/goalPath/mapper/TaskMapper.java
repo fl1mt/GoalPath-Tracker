@@ -10,6 +10,7 @@ import tracker.goalPath.model.Goal;
 public interface TaskMapper {
 
     @Mapping(target = "goalId", source = "goal.id")
+    @Mapping(target = "subtaskCount", source = "subtaskCount")
     TaskDTO toDTO(Task task);
 
     @Mapping(target = "updatedAt", ignore = true)

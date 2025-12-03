@@ -36,11 +36,19 @@ public class TaskService {
         return taskMapper.toDTO(savedTask);
     }
 
-    public List<TaskDTO> getTasksByGoal(Long userId, UUID goalId) {
+    public List<TaskDTO> getTasksByGoal(String status, String query, Long userId, UUID goalId) {
 
         authService.checkGoalOwnership(goalId, userId);
 
-        List<Task> tasks = taskRepository.findByGoalId(goalId);
+        List<Task> tasks;
+
+        if(query != null && !query.trim().isEmpty()){
+            tasks = taskRepository.searchTasksByQueryAndSort(goalId, query);
+        }
+        else {
+            tasks = taskRepository.findFilteredAndSortedTasks(goalId, status);
+        }
+
         return tasks.stream()
                 .map(taskMapper::toDTO)
                 .collect(Collectors.toList());

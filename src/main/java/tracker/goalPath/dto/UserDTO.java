@@ -1,10 +1,14 @@
 package tracker.goalPath.dto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 
 public class UserDTO {
+    @JsonIgnore
     private Long id;
     private String username;
     private String email;
+    @JsonIgnore
     private LocalDateTime createdAt;
     public Long getId() {
         return id;

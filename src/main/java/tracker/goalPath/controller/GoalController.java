@@ -31,9 +31,11 @@ public class GoalController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GoalDTO>> getUserGoals(Authentication authentication) {
+    public ResponseEntity<List<GoalDTO>> getUserGoals(@RequestParam(required = false) String status,
+                                                      @RequestParam(required = false) String query,
+                                                      Authentication authentication) {
         User user = getCurrentUser(authentication);
-        List<GoalDTO> goals = goalService.getGoalsByUser(user.getId());
+        List<GoalDTO> goals = goalService.getGoalsByUser(status, query, user.getId());
         return ResponseEntity.ok(goals);
     }
 

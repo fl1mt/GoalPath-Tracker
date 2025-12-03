@@ -41,9 +41,17 @@ public class GoalService {
         return goalMapper.toDTO(saved);
     }
 
-    public List<GoalDTO> getGoalsByUser(Long userId) {
-        return goalRepository.findByUserId(userId)
-                .stream()
+    public List<GoalDTO> getGoalsByUser(String status, String query, Long userId) {
+        List<Goal> goals;
+
+        if(query != null && !query.trim().isEmpty()){
+            goals = goalRepository.searchGoalsByQueryAndSort(userId, query);
+        }
+        else{
+            goals = goalRepository.findFilteredAndSortedGoals(userId, status);
+        }
+
+        return goals.stream()
                 .map(goalMapper::toDTO)
                 .collect(Collectors.toList());
     }
